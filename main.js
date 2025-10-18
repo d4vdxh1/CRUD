@@ -9,7 +9,7 @@ const usersTable = document.getElementById('usersTable')
 const cancelEdit = document.getElementById('cancelEdit')
 
 // Función para cargar usuarios
-async function loadUsers() {
+function loadUsers() {
   const { data, error } = await supabase.from('usuarios').select('*')
   if (error) return console.error(error)
 
