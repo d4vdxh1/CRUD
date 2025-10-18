@@ -1,6 +1,6 @@
 // Conexión a Supabase
-const supabaseUrl = 'TU_SUPABASE_URL'
-const supabaseKey = 'TU_SUPABASE_ANON_KEY'
+const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE'
 const supabase = supabase.createClient(supabaseUrl, supabaseKey)
 
 // Elementos del DOM
