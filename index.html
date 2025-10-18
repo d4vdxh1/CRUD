@@ -53,7 +53,7 @@
   // 1️⃣ Configurar Supabase (asegúrate de poner tu URL y Key)
   const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE';
-  const supabase = Supabase.createClient(supabaseUrl, supabaseKey); // ⚠ Mayúscula S
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey); // ⚠ Mayúscula S
 
   const userForm = document.getElementById('userForm');
   const usersTable = document.getElementById('usersTable');
