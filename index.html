@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRUD Supabase</title>
+  <title>CRUD Supabase en Tiempo Real</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Supabase JS -->
@@ -12,7 +12,7 @@
 <body class="bg-light">
 
 <div class="container py-5">
-  <h1 class="mb-4">CRUD Usuarios</h1>
+  <h1 class="mb-4">CRUD Usuarios (Tiempo Real)</h1>
 
   <!-- Formulario -->
   <div class="card mb-4">
@@ -48,12 +48,10 @@
 </div>
 
 <script>
-  // Inicializar Supabase correctamente
+  // 1️⃣ Configurar Supabase
   const SUPABASE_URL = 'https://otdbuuhddyrjhmgzctsf.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE';
-
-  // Aquí NO usamos `const supabase = supabase.createClient`, sino la variable global:
-  window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const userForm = document.getElementById('userForm');
   const usersTable = document.getElementById('usersTable');
@@ -62,8 +60,9 @@
   const emailInput = document.getElementById('email');
   const cancelEditBtn = document.getElementById('cancelEdit');
 
+  // 2️⃣ Función para listar usuarios
   async function listarUsuarios() {
-    const { data, error } = await window.supabaseClient.from('usuarios').select('*').order('id');
+    const { data, error } = await supabase.from('usuarios').select('*').order('id');
     if (error) return console.error(error);
 
     usersTable.innerHTML = data.map(u => `
@@ -79,6 +78,7 @@
     `).join('');
   }
 
+  // 3️⃣ Crear o actualizar usuario
   userForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = nombreInput.value;
@@ -86,19 +86,19 @@
     const id = userIdInput.value;
 
     if (id) {
-      const { error } = await window.supabaseClient.from('usuarios').update({ nombre, email }).eq('id', id);
+      const { error } = await supabase.from('usuarios').update({ nombre, email }).eq('id', id);
       if (error) return console.error(error);
     } else {
-      const { error } = await window.supabaseClient.from('usuarios').insert([{ nombre, email }]);
+      const { error } = await supabase.from('usuarios').insert([{ nombre, email }]);
       if (error) return console.error(error);
     }
 
     userForm.reset();
     userIdInput.value = '';
     cancelEditBtn.classList.add('d-none');
-    listarUsuarios();
   });
 
+  // 4️⃣ Editar usuario
   window.editarUsuario = (id, nombre, email) => {
     userIdInput.value = id;
     nombreInput.value = nombre;
@@ -112,14 +112,28 @@
     cancelEditBtn.classList.add('d-none');
   });
 
+  // 5️⃣ Eliminar usuario
   window.eliminarUsuario = async (id) => {
     if (confirm('¿Eliminar este usuario?')) {
-      const { error } = await window.supabaseClient.from('usuarios').delete().eq('id', id);
+      const { error } = await supabase.from('usuarios').delete().eq('id', id);
       if (error) return console.error(error);
-      listarUsuarios();
     }
   };
 
+  // 6️⃣ Escuchar cambios en tiempo real
+  supabase
+    .channel('realtime-usuarios')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'usuarios' },
+      payload => {
+        console.log('Cambio detectado:', payload);
+        listarUsuarios();
+      }
+    )
+    .subscribe();
+
+  // 7️⃣ Cargar usuarios al iniciar
   listarUsuarios();
 </script>
 
