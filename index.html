@@ -43,17 +43,17 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    <tbody id="usersTable">
-      <!-- Aquí se cargan los usuarios -->
-    </tbody>
+    <tbody id="usersTable"></tbody>
   </table>
 </div>
 
 <script>
-  // 1️⃣ Configurar Supabase (asegúrate de poner tu URL y Key)
-  const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey); // ⚠ Mayúscula S
+  // Inicializar Supabase correctamente
+  const SUPABASE_URL = 'https://otdbuuhddyrjhmgzctsf.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE';
+
+  // Aquí NO usamos `const supabase = supabase.createClient`, sino la variable global:
+  window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const userForm = document.getElementById('userForm');
   const usersTable = document.getElementById('usersTable');
@@ -62,9 +62,8 @@
   const emailInput = document.getElementById('email');
   const cancelEditBtn = document.getElementById('cancelEdit');
 
-  // 2️⃣ Función para listar usuarios
   async function listarUsuarios() {
-    const { data, error } = await supabase.from('usuarios').select('*').order('id');
+    const { data, error } = await window.supabaseClient.from('usuarios').select('*').order('id');
     if (error) return console.error(error);
 
     usersTable.innerHTML = data.map(u => `
@@ -80,7 +79,6 @@
     `).join('');
   }
 
-  // 3️⃣ Crear o actualizar usuario
   userForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = nombreInput.value;
@@ -88,12 +86,10 @@
     const id = userIdInput.value;
 
     if (id) {
-      // Actualizar
-      const { error } = await supabase.from('usuarios').update({ nombre, email }).eq('id', id);
+      const { error } = await window.supabaseClient.from('usuarios').update({ nombre, email }).eq('id', id);
       if (error) return console.error(error);
     } else {
-      // Crear
-      const { error } = await supabase.from('usuarios').insert([{ nombre, email }]);
+      const { error } = await window.supabaseClient.from('usuarios').insert([{ nombre, email }]);
       if (error) return console.error(error);
     }
 
@@ -103,7 +99,6 @@
     listarUsuarios();
   });
 
-  // 4️⃣ Editar usuario
   window.editarUsuario = (id, nombre, email) => {
     userIdInput.value = id;
     nombreInput.value = nombre;
@@ -117,16 +112,14 @@
     cancelEditBtn.classList.add('d-none');
   });
 
-  // 5️⃣ Eliminar usuario
   window.eliminarUsuario = async (id) => {
     if (confirm('¿Eliminar este usuario?')) {
-      const { error } = await supabase.from('usuarios').delete().eq('id', id);
+      const { error } = await window.supabaseClient.from('usuarios').delete().eq('id', id);
       if (error) return console.error(error);
       listarUsuarios();
     }
   };
 
-  // 6️⃣ Cargar usuarios al iniciar
   listarUsuarios();
 </script>
 
