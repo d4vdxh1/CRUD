@@ -1,13 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
   // Todo tu código de main.js dentro de esta función
   
   // Conexión a Supabase
   const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co'
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE'
-  const supabase = supabase.createClient
-    ? supabase.createClient(supabaseUrl, supabaseKey)  // si el CDN expone "supabase"
-    : Supabase.createClient(supabaseUrl, supabaseKey)  // si el CDN expone "Supabase"
-  
+  //const supabase = supabase.createClient
+   // ? supabase.createClient(supabaseUrl, supabaseKey)  // si el CDN expone "supabase"
+   // : Supabase.createClient(supabaseUrl, supabaseKey)  // si el CDN expone "Supabase"
+document.addEventListener('DOMContentLoaded', () => {
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey)
   // Elementos del DOM
   const userForm = document.getElementById('userForm')
   const usersTable = document.getElementById('usersTable')
