@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody id="usersTable">
-        <!-- Aquí se insertarán los usuarios -->
+        <!-- Filas generadas dinámicamente -->
       </tbody>
     </table>
   </div>
@@ -48,29 +48,27 @@
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 
-  <!-- JS personalizado -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
       // Conexión a Supabase
-      const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co'
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE'
-
-      const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+      const supabaseUrl = 'https://otdbuuhddyrjhmgzctsf.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZGJ1dWhkZHlyamhtZ3pjdHNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDMwNzUsImV4cCI6MjA3NjM3OTA3NX0.YXXSWbp5Q2GSM3kbEegzyMLCrAXt2dLtJlkdLDSQawE';
+      const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
       // Elementos del DOM
-      const userForm = document.getElementById('userForm')
-      const usersTable = document.getElementById('usersTable')
-      const cancelEdit = document.getElementById('cancelEdit')
+      const userForm = document.getElementById('userForm');
+      const usersTable = document.getElementById('usersTable');
+      const cancelEdit = document.getElementById('cancelEdit');
 
-      // Cargar usuarios
+      // Función para cargar usuarios
       async function loadUsers() {
-        const { data, error } = await supabase.from('usuarios').select('*').order('id', { ascending: true })
-        if (error) return console.error(error)
+        const { data, error } = await supabase.from('usuarios').select('*').order('id', { ascending: true });
+        if (error) return console.error(error);
 
-        usersTable.innerHTML = ''
+        usersTable.innerHTML = '';
         data.forEach(user => {
-          const row = document.createElement('tr')
+          const row = document.createElement('tr');
           row.innerHTML = `
             <td>${user.id}</td>
             <td>${user.nombre}</td>
@@ -79,59 +77,59 @@
               <button class="btn btn-sm btn-warning" onclick="editUser(${user.id}, '${user.nombre}', '${user.email}')">Editar</button>
               <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Eliminar</button>
             </td>
-          `
-          usersTable.appendChild(row)
-        })
+          `;
+          usersTable.appendChild(row);
+        });
       }
 
-      // Agregar / actualizar usuario
+      // Agregar o actualizar usuario
       userForm.addEventListener('submit', async e => {
-        e.preventDefault()
-        const id = document.getElementById('userId').value
-        const nombre = document.getElementById('name').value
-        const email = document.getElementById('email').value
+        e.preventDefault();
+        const id = document.getElementById('userId').value;
+        const nombre = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
 
         if (id) {
           const { error } = await supabase.from('usuarios')
             .update({ nombre, email })
-            .eq('id', id)
-          if (error) console.error(error)
+            .eq('id', id);
+          if (error) console.error(error);
         } else {
           const { error } = await supabase.from('usuarios')
-            .insert([{ nombre, email }])
-          if (error) console.error(error)
+            .insert([{ nombre, email }]);
+          if (error) console.error(error);
         }
 
-        userForm.reset()
-        document.getElementById('userId').value = ''
-        loadUsers()
-      })
+        userForm.reset();
+        document.getElementById('userId').value = '';
+        loadUsers();
+      });
 
       // Editar usuario
       window.editUser = (id, nombre, email) => {
-        document.getElementById('userId').value = id
-        document.getElementById('name').value = nombre
-        document.getElementById('email').value = email
-      }
+        document.getElementById('userId').value = id;
+        document.getElementById('name').value = nombre;
+        document.getElementById('email').value = email;
+      };
 
       // Cancelar edición
       cancelEdit.addEventListener('click', () => {
-        userForm.reset()
-        document.getElementById('userId').value = ''
-      })
+        userForm.reset();
+        document.getElementById('userId').value = '';
+      });
 
       // Eliminar usuario
       window.deleteUser = async (id) => {
         if (confirm('¿Eliminar este usuario?')) {
-          const { error } = await supabase.from('usuarios').delete().eq('id', id)
-          if (error) console.error(error)
-          loadUsers()
+          const { error } = await supabase.from('usuarios').delete().eq('id', id);
+          if (error) console.error(error);
+          loadUsers();
         }
-      }
+      };
 
-      // Cargar usuarios al inicio
-      loadUsers()
-    })
+      // Cargar usuarios al iniciar
+      loadUsers();
+    });
   </script>
 </body>
 </html>
